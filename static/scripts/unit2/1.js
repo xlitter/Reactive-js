@@ -21,18 +21,16 @@
 		//发起ajax请求,并将ajax promise结果转换为Observable,
 		//通过flatMap取得Observable,然后subscribe获取response结果,map只能得到一个Observable
 		rspStream = reqStream.flatMap(url=> Rx.Observable.fromPromise($.getJSON(url))),
-		
-		closeClickStream = listCloseClickStream
+
+		suggestionStream = listCloseClickStream
 		//先触发一次点击事件,使rspStream中获得值
 			.startWith('list click')
 		//合并rspStream和listClickStream 
 		//使其在点击close按钮和rspSream发生变化时都可以触发(click, list)=>{}方法的执行
-			.combineLatest(rspStream, (element, list) => {
-				return { source: element, value: list[Math.floor(Math.random() * list.length)] };
-			}),
-			
-		suggestionStream = refreshClickStream.map(()=> null)
-		.startWith().merge(Rx.Observable.repeat(closeClickStream, 3).mergeAll())
+			.combineLatest(rspStream, (...rest) => {
+				let list = rest[1];
+				return  list[Math.floor(Math.random() * list.length)] ;
+			})
 		//合并refreshClickSream,使其点击refresh时先触发subscribe,传入null值
 			.merge(refreshClickStream.map(() => null))
 		//先refresh触发一次
@@ -47,23 +45,13 @@
 						</div>`;
 	}
 
-	suggestionStream.subscribe(v => {
-		if (v) {
-			let source = v.source,
-				value = v.value;
-
-			if (source.nodeType === Document.ELEMENT_NODE) {
-				let $source = $(source).parent('.item');
-				$list.find($source).replaceWith(() => {
-					return createElement(value);
-				});
-			} else {
-				$list.append(createElement(value));
-			}
-		} else {
-			$list.empty();
-		}
-
+	suggestionStream
+		// .filter((...rest) => {
+		// 	console.log('rest', rest);
+		// });
+	.subscribe(v => {
+		//jshint -W030
+		 v&&$list.empty().append(createElement(v))||$list.empty();
 	});
 
 	listCloseClickStream.subscribe(v => {
