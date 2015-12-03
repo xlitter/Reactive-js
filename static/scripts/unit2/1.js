@@ -54,10 +54,6 @@
 		 v&&$list.empty().append(createElement(v))||$list.empty();
 	});
 
-	listCloseClickStream.subscribe(v => {
-
-	});
-		
 		// rspStream.subscribe((rsp) => {
 		// $list.empty().append(rsp.map(v=> `<div class="item">
 		// 				<img class="avatar" src="${v.avatar_url}" alt="${v.login}">
