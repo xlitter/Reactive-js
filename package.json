@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "node index.js",
-    "static-watch": "gulp watch",
-    "dev": "npm run server & npm run static-watch"
+    "static-watch": "gulp watch"
   },
   "author": "",
   "license": "ISC",
